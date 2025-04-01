@@ -14,4 +14,8 @@ func main() {
 	if err := config.InitDB(); err != nil {
 		log.Fatal(err)
 	}
+
+	if err := config.InitHTTPServer(); err != nil {
+		log.Fatal(err)
+	}
 }
