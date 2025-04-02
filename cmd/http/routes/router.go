@@ -15,6 +15,7 @@ func NewRouter() *router {
 
 func (router *router) InitRoutes() http.Handler {
 	r := chi.NewRouter()
+	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger)
 
 	r.Route("/api", func(r chi.Router) {
