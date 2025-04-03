@@ -28,3 +28,7 @@ func UnprocessableEntityError(message string) *AppError {
 func BadRequestErrorWithCauses(message string, causes []Cause) *AppError {
 	return NewAppError(message, http.StatusBadRequest, causes)
 }
+
+func ConflictError(message string) *AppError {
+	return NewAppError(message, http.StatusConflict, nil)
+}

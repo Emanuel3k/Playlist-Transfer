@@ -9,17 +9,17 @@ import (
 )
 
 var (
-	ErrRequestContentTypeNotJSON = web.UnprocessableEntityError("request content type is not application/json")
-	ErrRequestBodyInvalid        = web.BadRequestErrorWithCauses("request body is invalid", nil)
+	errRequestContentTypeNotJSON = web.UnprocessableEntityError("request content type is not application/json")
+	errRequestBodyInvalid        = web.BadRequestErrorWithCauses("request body is invalid", nil)
 )
 
 func Decode(r *http.Request, body any) *web.AppError {
 	if r.Header.Get("Content-Type") != "application/json" {
-		return ErrRequestContentTypeNotJSON
+		return errRequestContentTypeNotJSON
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(body); err != nil {
-		return ErrRequestContentTypeNotJSON
+		return errRequestContentTypeNotJSON
 	}
 
 	return nil
@@ -37,8 +37,8 @@ func Validate(body any) *web.AppError {
 			})
 		}
 
-		ErrRequestBodyInvalid.Causes = causes
-		return ErrRequestBodyInvalid
+		errRequestBodyInvalid.Causes = causes
+		return errRequestBodyInvalid
 	}
 
 	return nil
