@@ -15,8 +15,6 @@ var (
 func InitHTTPServer() error {
 	r := routes.NewRouter()
 
-	r.InitRoutes()
-
 	port := os.Getenv(HTTP_SERVER_PORT)
 
 	log.Println("starting http server on port", port, "🚀")
