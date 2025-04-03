@@ -19,6 +19,7 @@ func (router *router) InitRoutes() http.Handler {
 	r.Use(middleware.Logger)
 
 	r.Route("/api", func(r chi.Router) {
+		r.Mount("/user", MapUserRoutes())
 	})
 
 	return r
