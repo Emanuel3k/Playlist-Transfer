@@ -1,13 +1,39 @@
 package services
 
-import "github.com/emanuel3k/playlist-transfer/internal/domain"
+import (
+	"github.com/emanuel3k/playlist-transfer/internal/domain"
+	"github.com/emanuel3k/playlist-transfer/pkg/web"
+)
+
+var (
+	errUserEmailAlredyExists = web.ConflictError("User with this email already exists")
+)
 
 type UserService struct {
-	domain.UserRepositoryInterface
+	userRepository domain.UserRepositoryInterface
 }
 
 func NewUserService(userRepositoryInterface domain.UserRepositoryInterface) *UserService {
 	return &UserService{
-		UserRepositoryInterface: userRepositoryInterface,
+		userRepository: userRepositoryInterface,
 	}
+}
+
+func (s *UserService) Create(body domain.CreateUserDTO) (*domain.UserResponseDTO, *web.AppError) {
+	existsWithEmail, err := s.userRepository.GetByEmail(body.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	if existsWithEmail != nil {
+		return nil, errUserEmailAlredyExists
+	}
+
+	newUser := body.ToDomain()
+
+	if err = s.userRepository.Create(newUser); err != nil {
+		return nil, err
+	}
+
+	return newUser.ToResponse(), nil
 }
