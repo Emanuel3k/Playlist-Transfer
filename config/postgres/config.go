@@ -8,19 +8,24 @@ import (
 
 var (
 	DATABASE_CONNECTION_PATH = "DATABASE_CONNECTION_PATH"
+	db                       *sql.DB
 )
 
-func Config() (*sql.DB, error) {
+func Config() error {
 	dbConnPath := os.Getenv(DATABASE_CONNECTION_PATH)
 
 	db, err := sql.Open("postgres", dbConnPath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if err := db.Ping(); err != nil {
-		return nil, err
+	if err = db.Ping(); err != nil {
+		return err
 	}
 
-	return db, nil
+	return nil
+}
+
+func GetDB() *sql.DB {
+	return db
 }
