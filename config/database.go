@@ -6,7 +6,7 @@ import (
 )
 
 func InitDB() error {
-	if _, err := postgres.Config(); err != nil {
+	if err := postgres.Config(); err != nil {
 		return fmt.Errorf("error initializing postgres database: %w", err)
 	}
 
