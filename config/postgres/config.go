@@ -7,12 +7,12 @@ import (
 )
 
 var (
-	DATABASE_CONNECTION_PATH = "DATABASE_CONNECTION_PATH"
-	db                       *sql.DB
+	DatabaseConnectionPath = "DATABASE_CONNECTION_PATH"
+	conn                   *sql.DB
 )
 
 func Config() error {
-	dbConnPath := os.Getenv(DATABASE_CONNECTION_PATH)
+	dbConnPath := os.Getenv(DatabaseConnectionPath)
 
 	db, err := sql.Open("postgres", dbConnPath)
 	if err != nil {
@@ -23,9 +23,11 @@ func Config() error {
 		return err
 	}
 
+	conn = db
+
 	return nil
 }
 
 func GetDB() *sql.DB {
-	return db
+	return conn
 }
