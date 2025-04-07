@@ -1,6 +1,9 @@
 package web
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 type AppError struct {
 	Message string  `json:"message"`
@@ -31,4 +34,9 @@ func BadRequestErrorWithCauses(message string, causes []Cause) *AppError {
 
 func ConflictError(message string) *AppError {
 	return NewAppError(message, http.StatusConflict, nil)
+}
+
+func InternalServerError(message string, err error) *AppError {
+	log.Println("Error:", err)
+	return NewAppError(message, http.StatusInternalServerError, nil)
 }
