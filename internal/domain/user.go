@@ -1,6 +1,9 @@
 package domain
 
-import "github.com/emanuel3k/playlist-transfer/pkg/web"
+import (
+	"github.com/emanuel3k/playlist-transfer/pkg/web"
+	"github.com/google/uuid"
+)
 
 type User struct {
 	ID        *string
@@ -12,7 +15,7 @@ type User struct {
 
 func (u *User) ToResponse() *UserResponseDTO {
 	return &UserResponseDTO{
-		ID:        *u.ID,
+		ID:        uuid.NewString(),
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,
