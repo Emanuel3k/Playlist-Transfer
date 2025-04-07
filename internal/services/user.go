@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/emanuel3k/playlist-transfer/internal/domain"
+	"github.com/emanuel3k/playlist-transfer/pkg/security"
 	"github.com/emanuel3k/playlist-transfer/pkg/web"
 )
 
@@ -30,6 +31,13 @@ func (s *UserService) Create(body domain.CreateUserDTO) (*domain.UserResponseDTO
 	}
 
 	newUser := body.ToDomain()
+
+	hashedPassword, err := security.HashPassword(body.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	newUser.Password = hashedPassword
 
 	if err = s.userRepository.Create(newUser); err != nil {
 		return nil, err
