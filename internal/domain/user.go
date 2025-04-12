@@ -15,7 +15,7 @@ type User struct {
 
 func (u *User) ToResponse() *UserResponseDTO {
 	return &UserResponseDTO{
-		ID:        uuid.NewString(),
+		ID:        *u.ID,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,
@@ -30,7 +30,9 @@ type CreateUserDTO struct {
 }
 
 func (u *CreateUserDTO) ToDomain() *User {
+	uid := uuid.NewString()
 	return &User{
+		ID:        &uid,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,

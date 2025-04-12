@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/emanuel3k/playlist-transfer/internal/domain"
 	"github.com/emanuel3k/playlist-transfer/pkg/web"
 )
@@ -17,13 +18,28 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 }
 
 func (r *UserRepository) GetByEmail(email string) (*domain.User, *web.AppError) {
-	// toodo: implement this
+	query := `SELECT id, first_name, last_name, email, password FROM users WHERE email = $1`
+	row := r.db.QueryRow(query, email)
 
-	return nil, nil
+	var user domain.User
+	err := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Password)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, web.InternalServerError(ScanningErrorMessage, err)
+	}
+
+	return &user, nil
 }
 
 func (r *UserRepository) Create(user *domain.User) *web.AppError {
-	// toodo: implement this
+	query := `INSERT INTO users (id, first_name, last_name, email, password) values ($1, $2, $3, $4, $5)`
+
+	_, err := r.db.Exec(query, user.ID, user.FirstName, user.LastName, user.Email, user.Password)
+	if err != nil {
+		return web.InternalServerError(ExecErrorMessage, err)
+	}
 
 	return nil
 }
