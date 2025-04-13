@@ -8,6 +8,7 @@ import (
 
 type ServiceInterface interface {
 	Create(body dtos.CreateUserDTO) (*dtos.UserResponseDTO, *web.AppError)
+	Login(body dtos.LoginDTO) (string, *web.AppError)
 }
 
 type RepositoryInterface interface {
