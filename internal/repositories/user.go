@@ -3,6 +3,7 @@ package repositories
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/emanuel3k/playlist-transfer/internal/domain"
 	"github.com/emanuel3k/playlist-transfer/pkg/web"
 )
@@ -27,7 +28,7 @@ func (r *UserRepository) GetByEmail(email string) (*domain.User, *web.AppError) 
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
-		return nil, web.InternalServerError(ScanningErrorMessage, err)
+		return nil, web.InternalServerError(fmt.Errorf("error scanning row: %w", err))
 	}
 
 	return &user, nil
@@ -38,7 +39,7 @@ func (r *UserRepository) Create(user *domain.User) *web.AppError {
 
 	_, err := r.db.Exec(query, user.ID, user.FirstName, user.LastName, user.Email, user.Password)
 	if err != nil {
-		return web.InternalServerError(ExecErrorMessage, err)
+		return web.InternalServerError(fmt.Errorf("error executing query: %w", err))
 	}
 
 	return nil
