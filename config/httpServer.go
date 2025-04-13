@@ -9,13 +9,13 @@ import (
 )
 
 var (
-	HTTP_SERVER_PORT = "HTTP_SERVER_PORT"
+	HttpServerPort = "HTTP_SERVER_PORT"
 )
 
 func InitHTTPServer() error {
 	r := routes.NewRouter()
 
-	port := os.Getenv(HTTP_SERVER_PORT)
+	port := os.Getenv(HttpServerPort)
 
 	log.Println("starting http server on port", port, "🚀")
 
