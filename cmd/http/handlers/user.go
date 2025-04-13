@@ -38,3 +38,25 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	response.Send(w, http.StatusCreated, res)
 }
+
+func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var body dtos.LoginDTO
+	if err := request.Decode(r, &body); err != nil {
+		response.Send(w, err.Code, err)
+		return
+	}
+
+	if err := request.Validate(body); err != nil {
+		response.Send(w, err.Code, err)
+		return
+	}
+
+	accessToken, err := h.userService.Login(body)
+	if err != nil {
+		response.Send(w, err.Code, err.Message)
+		return
+	}
+
+	w.Header().Set("Authorization", accessToken)
+	response.Send(w, http.StatusOK, nil)
+}

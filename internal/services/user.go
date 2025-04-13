@@ -9,6 +9,7 @@ import (
 
 var (
 	errUserEmailAlredyExists = web.ConflictError("User with this email already exists")
+	InvalidEmailOrPassword   = web.UnauthorizedError("Invalid email or password")
 )
 
 type UserService struct {
@@ -45,4 +46,26 @@ func (s *UserService) Create(body dtos.CreateUserDTO) (*dtos.UserResponseDTO, *w
 	}
 
 	return dtos.UserToResponse(*newUser), nil
+}
+
+func (s *UserService) Login(body dtos.LoginDTO) (string, *web.AppError) {
+	u, err := s.userRepository.GetByEmail(body.Email)
+	if err != nil {
+		return "", err
+	}
+
+	if u == nil {
+		return "", InvalidEmailOrPassword
+	}
+
+	if err = security.ComparePassword(u.Password, body.Password); err != nil {
+		return "", err
+	}
+
+	token, err := u.GenerateToken()
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }

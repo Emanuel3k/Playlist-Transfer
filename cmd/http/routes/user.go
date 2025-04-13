@@ -18,6 +18,7 @@ func MapUserRoutes() http.Handler {
 	r := chi.NewRouter()
 
 	r.Post("/create", userHandler.Create)
+	r.Post("/login", userHandler.Login)
 
 	return r
 }
