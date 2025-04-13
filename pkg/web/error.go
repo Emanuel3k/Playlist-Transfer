@@ -36,7 +36,11 @@ func ConflictError(message string) *AppError {
 	return NewAppError(message, http.StatusConflict, nil)
 }
 
-func InternalServerError(message string, err error) *AppError {
+func UnauthorizedError(message string) *AppError {
+	return NewAppError(message, http.StatusUnauthorized, nil)
+}
+
+func InternalServerError(err error) *AppError {
 	log.Println("Error:", err)
-	return NewAppError(message, http.StatusInternalServerError, nil)
+	return NewAppError("Internal Server Error", http.StatusInternalServerError, nil)
 }
