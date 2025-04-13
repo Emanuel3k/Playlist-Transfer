@@ -1,24 +1,25 @@
 package handlers
 
 import (
-	"github.com/emanuel3k/playlist-transfer/internal/domain"
+	"github.com/emanuel3k/playlist-transfer/internal/domain/user"
+	"github.com/emanuel3k/playlist-transfer/internal/dtos"
 	"github.com/emanuel3k/playlist-transfer/pkg/web/request"
 	"github.com/emanuel3k/playlist-transfer/pkg/web/response"
 	"net/http"
 )
 
 type UserHandler struct {
-	userService domain.UserServiceInterface
+	userService user.ServiceInterface
 }
 
-func NewUserHandler(userServiceInterface domain.UserServiceInterface) *UserHandler {
+func NewUserHandler(userServiceInterface user.ServiceInterface) *UserHandler {
 	return &UserHandler{
 		userService: userServiceInterface,
 	}
 }
 
 func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var body domain.CreateUserDTO
+	var body dtos.CreateUserDTO
 	if err := request.Decode(r, &body); err != nil {
 		response.Send(w, err.Code, err)
 		return

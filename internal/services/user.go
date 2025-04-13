@@ -1,7 +1,8 @@
 package services
 
 import (
-	"github.com/emanuel3k/playlist-transfer/internal/domain"
+	"github.com/emanuel3k/playlist-transfer/internal/domain/user"
+	"github.com/emanuel3k/playlist-transfer/internal/dtos"
 	"github.com/emanuel3k/playlist-transfer/pkg/security"
 	"github.com/emanuel3k/playlist-transfer/pkg/web"
 )
@@ -11,16 +12,16 @@ var (
 )
 
 type UserService struct {
-	userRepository domain.UserRepositoryInterface
+	userRepository user.RepositoryInterface
 }
 
-func NewUserService(userRepositoryInterface domain.UserRepositoryInterface) *UserService {
+func NewUserService(userRepositoryInterface user.RepositoryInterface) *UserService {
 	return &UserService{
 		userRepository: userRepositoryInterface,
 	}
 }
 
-func (s *UserService) Create(body domain.CreateUserDTO) (*domain.UserResponseDTO, *web.AppError) {
+func (s *UserService) Create(body dtos.CreateUserDTO) (*dtos.UserResponseDTO, *web.AppError) {
 	existsWithEmail, err := s.userRepository.GetByEmail(body.Email)
 	if err != nil {
 		return nil, err
@@ -43,5 +44,5 @@ func (s *UserService) Create(body domain.CreateUserDTO) (*domain.UserResponseDTO
 		return nil, err
 	}
 
-	return newUser.ToResponse(), nil
+	return dtos.UserToResponse(*newUser), nil
 }
