@@ -11,6 +11,10 @@ func Send(w http.ResponseWriter, code int, body any) {
 		return
 	}
 
+	if str, ok := body.(string); ok {
+		body = map[string]string{"message": str}
+	}
+
 	bytes, err := json.Marshal(body)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
