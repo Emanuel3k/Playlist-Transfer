@@ -37,7 +37,7 @@ func Authorization(next http.Handler) http.Handler {
 			}
 
 			claims, ok := token.Claims.(jwt.MapClaims)
-			if !ok && !token.Valid {
+			if !ok || !token.Valid {
 				response.Send(w, http.StatusUnauthorized, invalidTokenError)
 				return
 			}
