@@ -18,6 +18,10 @@ func Authorization(next http.Handler) http.Handler {
 			secret := os.Getenv("JWT_SECRET_KEY")
 			tokenValue := r.Header.Get("Authorization")
 
+			if !strings.HasPrefix(tokenValue, "Bearer ") {
+				response.Send(w, http.StatusUnauthorized, invalidTokenError)
+				return
+			}
 			tokenValue = tokenValue[len("Bearer "):]
 
 			token, err := jwt.Parse(tokenValue, func(token *jwt.Token) (any, error) {
