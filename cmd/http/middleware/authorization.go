@@ -19,7 +19,7 @@ func Authorization(next http.Handler) http.Handler {
 			secret := os.Getenv("JWT_SECRET_KEY")
 			tokenValue := r.Header.Get("Authorization")
 
-			if !strings.HasPrefix(tokenValue, "Bearer ") {
+			if tokenValue == "" || !strings.HasPrefix(tokenValue, "Bearer ") {
 				response.Send(w, http.StatusUnauthorized, invalidTokenError)
 				return
 			}
