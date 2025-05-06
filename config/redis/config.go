@@ -40,6 +40,6 @@ func InitRedis() error {
 	return nil
 }
 
-func GetRedis() *redis.Client {
+func Get() *redis.Client {
 	return conn
 }

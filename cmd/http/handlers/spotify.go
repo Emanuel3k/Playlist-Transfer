@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"github.com/emanuel3k/playlist-transfer/internal/domain/spotify"
+	"github.com/emanuel3k/playlist-transfer/pkg/web/response"
 	"net/http"
 	"net/url"
 	"os"
@@ -12,28 +14,34 @@ var (
 )
 
 type SpotifyHandler struct {
+	spotifyService spotify.ServiceInterface
 }
 
-func NewSpotifyHandler() *SpotifyHandler {
-	return &SpotifyHandler{}
+func NewSpotifyHandler(spotifyService spotify.ServiceInterface) *SpotifyHandler {
+	return &SpotifyHandler{
+		spotifyService: spotifyService,
+	}
 }
 
 func (h *SpotifyHandler) Auth(w http.ResponseWriter, r *http.Request) {
 	userId := r.Header.Get("user_id")
 
-	spotifyRedirectURL := os.Getenv(spotifyRedirectURI)
-	spotifyClientID := os.Getenv(spotifyClientID)
+	RedirectUri := os.Getenv(spotifyRedirectURI)
+	clientId := os.Getenv(spotifyClientID)
 	scope := "user-read-private user-read-email"
 
 	spotifyURL := "https://accounts.spotify.com/authorize"
 	params := url.Values{}
-	params.Add("client_id", spotifyClientID)
+	params.Add("client_id", clientId)
 	params.Add("response_type", "code")
-	params.Add("redirect_uri", spotifyRedirectURL)
+	params.Add("redirect_uri", RedirectUri)
 	params.Add("scope", scope)
 	params.Add("state", userId)
 
-	// todo: add redis to store the state
+	if apiErr := h.spotifyService.SetState(userId, userId); apiErr != nil {
+		response.Send(w, apiErr.Code, apiErr.Message)
+		return
+	}
 
 	spotifyAuthURL := spotifyURL + "?" + params.Encode()
 

@@ -10,7 +10,7 @@ import (
 )
 
 func MapUserRoutes() http.Handler {
-	db := postgres.GetDB()
+	db := postgres.Get()
 	userRepository := repositories.NewUserRepository(db)
 	userService := services.NewUserService(userRepository)
 	userHandler := handlers.NewUserHandler(userService)
