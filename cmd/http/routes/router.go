@@ -20,6 +20,7 @@ func (router *router) InitRoutes() http.Handler {
 
 	r.Route("/api", func(r chi.Router) {
 		r.Mount("/user", MapUserRoutes())
+		r.Mount("/spotify", MapSpotifyRoutes())
 	})
 
 	return r
