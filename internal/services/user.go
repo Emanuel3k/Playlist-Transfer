@@ -62,7 +62,7 @@ func (s *UserService) Login(body dtos.LoginDTO) (string, *web.AppError) {
 		return "", err
 	}
 
-	token, err := u.GenerateToken()
+	token, err := security.GenerateToken(u)
 	if err != nil {
 		return "", err
 	}
