@@ -8,7 +8,7 @@ import (
 type AppError struct {
 	Message string  `json:"message"`
 	Code    int     `json:"code"`
-	Causes  []Cause `json:"causes"`
+	Causes  []Cause `json:"causes,omitempty"`
 }
 
 type Cause struct {
