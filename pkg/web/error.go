@@ -40,6 +40,10 @@ func UnauthorizedError(message string) *AppError {
 	return NewAppError(message, http.StatusUnauthorized, nil)
 }
 
+func NotFoundError(message string) *AppError {
+	return NewAppError(message, http.StatusNotFound, nil)
+}
+
 func InternalServerError(err error) *AppError {
 	log.Println("Error:", err)
 	return NewAppError("Internal Server Error", http.StatusInternalServerError, nil)

@@ -19,6 +19,7 @@ func MapSpotifyRoutes() http.Handler {
 	spotifyHandler := handlers.NewSpotifyHandler(spotifyService)
 
 	r.With(middleware.Authorization).Get("/auth", spotifyHandler.Auth)
+	r.Get("/callback", spotifyHandler.Callback)
 
 	return r
 }

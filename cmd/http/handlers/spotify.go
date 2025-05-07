@@ -4,13 +4,6 @@ import (
 	"github.com/emanuel3k/playlist-transfer/internal/domain/spotify"
 	"github.com/emanuel3k/playlist-transfer/pkg/web/response"
 	"net/http"
-	"net/url"
-	"os"
-)
-
-var (
-	spotifyRedirectURI = "SPOTIFY_REDIRECT_URI"
-	spotifyClientID    = "SPOTIFY_CLIENT_ID"
 )
 
 type SpotifyHandler struct {
@@ -26,24 +19,36 @@ func NewSpotifyHandler(spotifyService spotify.ServiceInterface) *SpotifyHandler 
 func (h *SpotifyHandler) Auth(w http.ResponseWriter, r *http.Request) {
 	userId := r.Header.Get("user_id")
 
-	RedirectUri := os.Getenv(spotifyRedirectURI)
-	clientId := os.Getenv(spotifyClientID)
-	scope := "user-read-private user-read-email"
-
-	spotifyURL := "https://accounts.spotify.com/authorize"
-	params := url.Values{}
-	params.Add("client_id", clientId)
-	params.Add("response_type", "code")
-	params.Add("redirect_uri", RedirectUri)
-	params.Add("scope", scope)
-	params.Add("state", userId)
+	redirectURI := h.spotifyService.GetRedirectURI(userId)
 
 	if apiErr := h.spotifyService.SetState(userId, userId); apiErr != nil {
 		response.Send(w, apiErr.Code, apiErr.Message)
 		return
 	}
 
-	spotifyAuthURL := spotifyURL + "?" + params.Encode()
+	http.Redirect(w, r, redirectURI, http.StatusFound)
+}
 
-	http.Redirect(w, r, spotifyAuthURL, http.StatusFound)
+func (h *SpotifyHandler) Callback(w http.ResponseWriter, r *http.Request) {
+	spotifyErr := r.URL.Query().Get("error")
+	if spotifyErr != "" {
+		response.Send(w, http.StatusBadRequest, "error: "+spotifyErr)
+		return
+	}
+
+	state := r.URL.Query().Get("state")
+	code := r.URL.Query().Get("code")
+	if code == "" || state == "" {
+		response.Send(w, http.StatusBadRequest, "missing code or state")
+		return
+	}
+
+	accessToken, err := h.spotifyService.ExchangeCodeForToken(code, state)
+	if err != nil {
+		response.Send(w, err.Code, err.Message)
+		return
+	}
+
+	w.Header().Set("Spotify-Access-Token", accessToken)
+	response.Send(w, http.StatusOK, nil)
 }
