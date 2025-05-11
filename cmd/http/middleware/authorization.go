@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	invalidTokenError = web.UnauthorizedError("Invalid token")
+	invalidTokenError = web.UnauthorizedError("Invalid or missing token")
 	jwtSecretKey      = "JWT_SECRET_KEY"
 )
 
