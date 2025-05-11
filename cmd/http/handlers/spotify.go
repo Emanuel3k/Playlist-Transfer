@@ -19,14 +19,14 @@ func NewSpotifyHandler(spotifyService spotify.ServiceInterface) *SpotifyHandler 
 func (h *SpotifyHandler) Auth(w http.ResponseWriter, r *http.Request) {
 	userId := r.Header.Get("user_id")
 
-	redirectURI := h.spotifyService.GetRedirectURI(userId)
+	authURI := h.spotifyService.GetAuthURI(userId)
 
 	if apiErr := h.spotifyService.SetState(userId, userId); apiErr != nil {
 		response.Send(w, apiErr.Code, apiErr.Message)
 		return
 	}
 
-	http.Redirect(w, r, redirectURI, http.StatusFound)
+	http.Redirect(w, r, authURI, http.StatusFound)
 }
 
 func (h *SpotifyHandler) Callback(w http.ResponseWriter, r *http.Request) {

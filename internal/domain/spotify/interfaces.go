@@ -2,8 +2,13 @@ package spotify
 
 import "github.com/emanuel3k/playlist-transfer/pkg/web"
 
+type ProviderInterface interface {
+	GetAuthURI(userId string) string
+	GetAccessToken(code string) (*GetAccessTokenSpotifyAPIResponse, *web.AppError)
+}
+
 type ServiceInterface interface {
-	GetRedirectURI(userId string) string
+	GetAuthURI(userId string) string
 	SetState(userID string, scope string) *web.AppError
 	ExchangeCodeForToken(code string, state string) (string, *web.AppError)
 }
