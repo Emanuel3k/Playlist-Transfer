@@ -54,7 +54,7 @@ func DecodeToken(tokenString string) (*Token, *web.AppError) {
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok && !token.Valid {
+	if !ok || !token.Valid {
 		return nil, web.InternalServerError(fmt.Errorf("invalid token"))
 	}
 
