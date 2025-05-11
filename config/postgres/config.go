@@ -28,6 +28,6 @@ func Config() error {
 	return nil
 }
 
-func GetDB() *sql.DB {
+func Get() *sql.DB {
 	return conn
 }

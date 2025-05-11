@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"github.com/emanuel3k/playlist-transfer/pkg/security"
 	"github.com/emanuel3k/playlist-transfer/pkg/web"
 	"github.com/emanuel3k/playlist-transfer/pkg/web/response"
 	"github.com/golang-jwt/jwt"
@@ -11,12 +12,15 @@ import (
 	"time"
 )
 
-var invalidTokenError = web.UnauthorizedError("Invalid token")
+var (
+	invalidTokenError = web.UnauthorizedError("Invalid or missing token")
+	jwtSecretKey      = "JWT_SECRET_KEY"
+)
 
 func Authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			secret := os.Getenv("JWT_SECRET_KEY")
+			secret := os.Getenv(jwtSecretKey)
 			tokenValue := r.Header.Get("Authorization")
 
 			if tokenValue == "" || !strings.HasPrefix(tokenValue, "Bearer ") {
@@ -47,6 +51,16 @@ func Authorization(next http.Handler) http.Handler {
 				response.Send(w, http.StatusUnauthorized, invalidTokenError)
 				return
 			}
+
+			decodedToken, appErr := security.DecodeToken(tokenValue)
+			if appErr != nil {
+				response.Send(w, http.StatusUnauthorized, invalidTokenError)
+				return
+			}
+
+			r.Header.Set("user_id", decodedToken.ID)
+			r.Header.Set("user_name", decodedToken.Name)
+			r.Header.Set("user_email", decodedToken.Email)
 
 			next.ServeHTTP(w, r)
 		},

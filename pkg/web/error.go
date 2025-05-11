@@ -8,7 +8,7 @@ import (
 type AppError struct {
 	Message string  `json:"message"`
 	Code    int     `json:"code"`
-	Causes  []Cause `json:"causes"`
+	Causes  []Cause `json:"causes,omitempty"`
 }
 
 type Cause struct {
@@ -38,6 +38,10 @@ func ConflictError(message string) *AppError {
 
 func UnauthorizedError(message string) *AppError {
 	return NewAppError(message, http.StatusUnauthorized, nil)
+}
+
+func NotFoundError(message string) *AppError {
+	return NewAppError(message, http.StatusNotFound, nil)
 }
 
 func InternalServerError(err error) *AppError {
