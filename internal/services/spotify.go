@@ -42,7 +42,7 @@ func (s *SpotifyService) ExchangeCodeForToken(code string, state string) (string
 
 	tokenResponse, apiErr := s.spotifyProvider.GetAccessToken(code)
 	if apiErr != nil {
-
+		return "", apiErr
 	}
 
 	setStateErr := s.spotifyRepository.SetAccessToken(tokenResponse.AccessToken, tokenResponse.ExpiresIn)
