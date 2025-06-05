@@ -9,8 +9,11 @@ jobs:
     steps:
       - name: Install make
         run: sudo apt-get update && sudo apt-get install -y make
-        
+
       - uses: actions/checkout@v4
+
+      - name: Copy .env.example to .env
+        run: cp .env.example .env
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -24,4 +27,4 @@ jobs:
         run: make build
 
       - name: Test
-        run: make tes
+        run: make test
