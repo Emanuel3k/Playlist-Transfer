@@ -176,8 +176,8 @@ func TestUserService_Create(t *testing.T) {
 
 			result, err := userService.Create(newUser)
 
-			assert.Equal(t, result, tc.expectedResponse.res)
-			assert.Equal(t, err, tc.expectedResponse.err)
+			assert.Equal(t, tc.expectedResponse.res, result)
+			assert.Equal(t, tc.expectedResponse.err, err)
 		})
 	}
 }
