@@ -80,7 +80,7 @@ func TestUserService_Create(t *testing.T) {
 			},
 			expectedResponse: expectedResponse{
 				res: nil,
-				err: errUserEmailAlredyExists,
+				err: errUserEmailAlreadyExists,
 			},
 			getByEmailResponse: getByEmailResponse{
 				res: userDomain,
@@ -98,11 +98,11 @@ func TestUserService_Create(t *testing.T) {
 			},
 			expectedResponse: expectedResponse{
 				res: nil,
-				err: errUserEmailAlredyExists,
+				err: errUserEmailAlreadyExists,
 			},
 			getByEmailResponse: getByEmailResponse{
 				res: nil,
-				err: errUserEmailAlredyExists,
+				err: errUserEmailAlreadyExists,
 			},
 			createResponse: createResponse{
 				err: nil,
