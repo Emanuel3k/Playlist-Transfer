@@ -2,7 +2,6 @@ package dtos
 
 import (
 	"github.com/emanuel3k/playlist-transfer/internal/domain"
-	"github.com/google/uuid"
 )
 
 type CreateUserDTO struct {
@@ -13,9 +12,7 @@ type CreateUserDTO struct {
 }
 
 func (u *CreateUserDTO) ToDomain() *domain.User {
-	uid := uuid.NewString()
 	return &domain.User{
-		ID:        &uid,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,

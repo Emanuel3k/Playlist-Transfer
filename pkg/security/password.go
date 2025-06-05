@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func HashPassword(password string) (string, *web.AppError) {
+var HashPassword = func(password string) (string, *web.AppError) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", web.InternalServerError(fmt.Errorf("error hashing password: %w", err))
