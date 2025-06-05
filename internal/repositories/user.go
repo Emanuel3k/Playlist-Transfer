@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/emanuel3k/playlist-transfer/internal/domain"
 	"github.com/emanuel3k/playlist-transfer/pkg/web"
+	"github.com/google/uuid"
 )
 
 type UserRepository struct {
@@ -35,6 +36,9 @@ func (r *UserRepository) GetByEmail(email string) (*domain.User, *web.AppError) 
 }
 
 func (r *UserRepository) Create(user *domain.User) *web.AppError {
+	uid := uuid.NewString()
+	user.ID = &uid
+
 	query := `INSERT INTO users (id, first_name, last_name, email, password) values ($1, $2, $3, $4, $5)`
 
 	_, err := r.db.Exec(query, user.ID, user.FirstName, user.LastName, user.Email, user.Password)

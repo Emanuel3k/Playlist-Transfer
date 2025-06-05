@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	errUserEmailAlredyExists = web.ConflictError("User with this email already exists")
-	InvalidEmailOrPassword   = web.UnauthorizedError("Invalid email or password")
+	errUserEmailAlreadyExists = web.ConflictError("User with this email already exists")
+	InvalidEmailOrPassword    = web.UnauthorizedError("Invalid email or password")
 )
 
 type UserService struct {
@@ -29,7 +29,7 @@ func (s *UserService) Create(body dtos.CreateUserDTO) (*dtos.UserResponseDTO, *w
 	}
 
 	if existsWithEmail != nil {
-		return nil, errUserEmailAlredyExists
+		return nil, errUserEmailAlreadyExists
 	}
 
 	newUser := body.ToDomain()
