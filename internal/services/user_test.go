@@ -55,7 +55,7 @@ func TestUserService_Create(t *testing.T) {
 
 	testCases := []testCase{
 		{
-			name: "Create user sucessfully",
+			name: "Create user successfully",
 			hashedPasswordResponse: hashedPasswordResponse{
 				res: hashedPassword,
 				err: nil,
