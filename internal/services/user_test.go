@@ -6,34 +6,12 @@ import (
 	"github.com/emanuel3k/playlist-transfer/internal/domain/user/mock"
 	"github.com/emanuel3k/playlist-transfer/internal/dtos"
 	"github.com/emanuel3k/playlist-transfer/pkg/security"
+	"github.com/emanuel3k/playlist-transfer/pkg/test"
 	"github.com/emanuel3k/playlist-transfer/pkg/web"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"
 )
-
-type createResponse struct {
-	err *web.AppError
-}
-type getByEmailResponse struct {
-	res *domain.User
-	err *web.AppError
-}
-type hashedPasswordResponse struct {
-	res string
-	err *web.AppError
-}
-type expectedResponse struct {
-	res *dtos.UserResponseDTO
-	err *web.AppError
-}
-type testCase struct {
-	name                   string
-	hashedPasswordResponse hashedPasswordResponse
-	expectedResponse       expectedResponse
-	getByEmailResponse     getByEmailResponse
-	createResponse         createResponse
-}
 
 func TestUserService_Create(t *testing.T) {
 	newUser := dtos.CreateUserDTO{
@@ -48,119 +26,119 @@ func TestUserService_Create(t *testing.T) {
 	userId := "0"
 	userDomain.ID = &userId
 
-	hashedPassword := "res"
+	hashedPassword := "Res"
 	userDomain.Password = hashedPassword
 
 	expectedUser := dtos.UserToResponse(*userDomain)
 
-	testCases := []testCase{
+	testCases := []test.UserTestCase{
 		{
-			name: "Create user successfully",
-			hashedPasswordResponse: hashedPasswordResponse{
-				res: hashedPassword,
-				err: nil,
+			Name: "Create user successfully",
+			HashedPasswordResponse: test.HashedPasswordResponse{
+				Res: hashedPassword,
+				Err: nil,
 			},
-			expectedResponse: expectedResponse{
-				res: expectedUser,
-				err: nil,
+			ExpectedResponse: test.ExpectedResponse{
+				Res: expectedUser,
+				Err: nil,
 			},
-			getByEmailResponse: getByEmailResponse{
-				res: nil,
-				err: nil,
+			GetByEmailResponse: test.GetByEmailResponse{
+				Res: nil,
+				Err: nil,
 			},
-			createResponse: createResponse{
-				err: nil,
+			CreateResponse: test.CreateResponse{
+				Err: nil,
 			},
 		},
 		{
-			name: "User already exists",
-			hashedPasswordResponse: hashedPasswordResponse{
-				res: hashedPassword,
-				err: nil,
+			Name: "User already exists",
+			HashedPasswordResponse: test.HashedPasswordResponse{
+				Res: hashedPassword,
+				Err: nil,
 			},
-			expectedResponse: expectedResponse{
-				res: nil,
-				err: errUserEmailAlreadyExists,
+			ExpectedResponse: test.ExpectedResponse{
+				Res: nil,
+				Err: errUserEmailAlreadyExists,
 			},
-			getByEmailResponse: getByEmailResponse{
-				res: userDomain,
-				err: nil,
+			GetByEmailResponse: test.GetByEmailResponse{
+				Res: userDomain,
+				Err: nil,
 			},
-			createResponse: createResponse{
-				err: nil,
-			},
-		},
-		{
-			name: "Error getting user by email",
-			hashedPasswordResponse: hashedPasswordResponse{
-				res: hashedPassword,
-				err: nil,
-			},
-			expectedResponse: expectedResponse{
-				res: nil,
-				err: errUserEmailAlreadyExists,
-			},
-			getByEmailResponse: getByEmailResponse{
-				res: nil,
-				err: errUserEmailAlreadyExists,
-			},
-			createResponse: createResponse{
-				err: nil,
+			CreateResponse: test.CreateResponse{
+				Err: nil,
 			},
 		},
 		{
-			name: "Error creating user",
-			hashedPasswordResponse: hashedPasswordResponse{
-				res: hashedPassword,
-				err: nil,
+			Name: "Error getting user by email",
+			HashedPasswordResponse: test.HashedPasswordResponse{
+				Res: hashedPassword,
+				Err: nil,
 			},
-			expectedResponse: expectedResponse{
-				res: nil,
-				err: web.InternalServerError(errors.New("")),
+			ExpectedResponse: test.ExpectedResponse{
+				Res: nil,
+				Err: errUserEmailAlreadyExists,
 			},
-			getByEmailResponse: getByEmailResponse{
-				res: nil,
-				err: nil,
+			GetByEmailResponse: test.GetByEmailResponse{
+				Res: nil,
+				Err: errUserEmailAlreadyExists,
 			},
-			createResponse: createResponse{
-				err: web.InternalServerError(errors.New("")),
+			CreateResponse: test.CreateResponse{
+				Err: nil,
 			},
 		},
 		{
-			name: "Error hashing password",
-			hashedPasswordResponse: hashedPasswordResponse{
-				res: "",
-				err: web.InternalServerError(errors.New("")),
+			Name: "Error creating user",
+			HashedPasswordResponse: test.HashedPasswordResponse{
+				Res: hashedPassword,
+				Err: nil,
 			},
-			expectedResponse: expectedResponse{
-				res: nil,
-				err: web.InternalServerError(errors.New("")),
+			ExpectedResponse: test.ExpectedResponse{
+				Res: nil,
+				Err: web.InternalServerError(errors.New("")),
 			},
-			getByEmailResponse: getByEmailResponse{
-				res: nil,
-				err: nil,
+			GetByEmailResponse: test.GetByEmailResponse{
+				Res: nil,
+				Err: nil,
 			},
-			createResponse: createResponse{
-				err: nil,
+			CreateResponse: test.CreateResponse{
+				Err: web.InternalServerError(errors.New("")),
+			},
+		},
+		{
+			Name: "Error hashing password",
+			HashedPasswordResponse: test.HashedPasswordResponse{
+				Res: "",
+				Err: web.InternalServerError(errors.New("")),
+			},
+			ExpectedResponse: test.ExpectedResponse{
+				Res: nil,
+				Err: web.InternalServerError(errors.New("")),
+			},
+			GetByEmailResponse: test.GetByEmailResponse{
+				Res: nil,
+				Err: nil,
+			},
+			CreateResponse: test.CreateResponse{
+				Err: nil,
 			},
 		},
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+		t.Run(tc.Name, func(t *testing.T) {
 			userRespository := user_mock.NewRepositoryInterfaceMock(t)
 			userService := NewUserService(userRespository)
 
-			userRespository.EXPECT().GetByEmail(newUser.Email).Return(tc.getByEmailResponse.res, tc.getByEmailResponse.err)
+			userRespository.EXPECT().GetByEmail(newUser.Email).Return(tc.GetByEmailResponse.Res, tc.GetByEmailResponse.Err)
 
 			originalHashPassword := security.HashPassword
 			defer func() { security.HashPassword = originalHashPassword }()
 
 			security.HashPassword = func(password string) (string, *web.AppError) {
-				return tc.hashedPasswordResponse.res, tc.hashedPasswordResponse.err
+				return tc.HashedPasswordResponse.Res, tc.HashedPasswordResponse.Err
 			}
 
-			if tc.getByEmailResponse.res == nil && tc.getByEmailResponse.err == nil && tc.hashedPasswordResponse.err == nil {
+			if tc.GetByEmailResponse.Res == nil && tc.GetByEmailResponse.Err == nil && tc.HashedPasswordResponse.Err == nil {
 				userRespository.EXPECT().
 					Create(mock.MatchedBy(func(u *domain.User) bool {
 						return u.FirstName == userDomain.FirstName &&
@@ -171,13 +149,13 @@ func TestUserService_Create(t *testing.T) {
 					Run(func(u *domain.User) {
 						u.ID = &userId
 					}).
-					Return(tc.createResponse.err)
+					Return(tc.CreateResponse.Err)
 			}
 
 			result, err := userService.Create(newUser)
 
-			assert.Equal(t, tc.expectedResponse.res, result)
-			assert.Equal(t, tc.expectedResponse.err, err)
+			assert.Equal(t, tc.ExpectedResponse.Res, result)
+			assert.Equal(t, tc.ExpectedResponse.Err, err)
 		})
 	}
 }
